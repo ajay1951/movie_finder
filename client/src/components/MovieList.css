@@ -1,0 +1,64 @@
+/* src/components/MovieList.css */
+
+/* The container for all the movie cards */
+.movie-grid {
+  display: grid;
+  /* Create responsive columns: 
+     - As many columns of at least 200px as can fit.
+     - Each column takes up an equal fraction of the space.
+  */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem; /* Space between the cards */
+}
+
+/* Individual movie card styling */
+.movie-card {
+  background-color: #1c1c1c;
+  border-radius: 8px;
+  overflow: hidden; /* Ensures the image corners are rounded */
+  text-decoration: none; /* Removes underline from links */
+  color: white;
+  position: relative; /* Needed for the title overlay and remove button */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.movie-card:hover {
+  transform: scale(1.05); /* Enlarge the card on hover */
+  box-shadow: 0 10px 20px rgba(0, 209, 178, 0.2); /* Add a glow */
+}
+
+.movie-card img {
+  width: 100%;
+  display: block; /* Removes any bottom spacing */
+}
+
+.movie-card h3 {
+  padding: 1rem;
+  margin: 0;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* Style for the remove button on the watch later page */
+.remove-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff3860;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.remove-btn:hover {
+  opacity: 1;
+}

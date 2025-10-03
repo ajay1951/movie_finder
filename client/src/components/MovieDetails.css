@@ -1,0 +1,84 @@
+/* src/components/MovieDetails.css */
+
+.movie-details {
+  display: flex;
+  flex-wrap: wrap; /* Allows items to wrap on smaller screens */
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.movie-details img {
+  max-width: 300px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.details-content {
+  flex: 1; /* Takes up the remaining space */
+  min-width: 300px; /* Ensures content doesn't get too squished */
+}
+
+.details-content h1 {
+  text-align: left;
+  margin-top: 0;
+}
+
+.details-content p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.details-content button {
+  background-color: #00d1b2;
+  color: #121212;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+
+.details-content button:hover {
+  background-color: #00a78e;
+}
+
+/* Add this to the bottom of src/components/MovieDetails.css */
+
+.details-meta {
+  color: #aaa;
+  font-style: italic;
+}
+
+.details-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #333;
+}
+
+.details-section h2 {
+  margin-bottom: 1rem;
+  color: #00d1b2; /* Accent color */
+}
+
+.ratings-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.rating-item {
+  background-color: #1c1c1c;
+  padding: 0.8rem;
+  border-radius: 5px;
+  margin-bottom: 0.5rem;
+}
+
+.cast-crew-list p {
+  margin: 0.5rem 0;
+}
+
+.cast-crew-list strong {
+  color: #ccc;
+}
