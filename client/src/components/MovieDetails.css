@@ -1,8 +1,8 @@
-/* src/components/MovieDetails.css */
+/* client/src/components/MovieDetails.css */
 
 .movie-details {
   display: flex;
-  flex-wrap: wrap; /* Allows items to wrap on smaller screens */
+  flex-wrap: wrap;
   gap: 2rem;
   margin-top: 2rem;
 }
@@ -14,8 +14,8 @@
 }
 
 .details-content {
-  flex: 1; /* Takes up the remaining space */
-  min-width: 300px; /* Ensures content doesn't get too squished */
+  flex: 1;
+  min-width: 300px;
 }
 
 .details-content h1 {
@@ -28,6 +28,7 @@
   line-height: 1.6;
 }
 
+/* --- "ADD TO WATCH LATER" BUTTON STYLING --- */
 .details-content button {
   background-color: #00d1b2;
   color: #121212;
@@ -37,15 +38,16 @@
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease;
   margin-top: 1rem;
+  /* UPDATED: Add transform to the transition so it animates smoothly */
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
+/* --- "ADD TO WATCH LATER" BUTTON HOVER EFFECT (UPDATED) --- */
 .details-content button:hover {
-  background-color: #00a78e;
+  background-color: #00a78e; /* Darkens the button color */
+  transform: scale(1.03); /* Adds a subtle grow effect */
 }
-
-/* Add this to the bottom of src/components/MovieDetails.css */
 
 .details-meta {
   color: #aaa;
@@ -60,7 +62,7 @@
 
 .details-section h2 {
   margin-bottom: 1rem;
-  color: #00d1b2; /* Accent color */
+  color: #00d1b2;
 }
 
 .ratings-list {

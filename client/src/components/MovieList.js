@@ -1,8 +1,11 @@
-// src/components/MovieList.js
-import './MovieList.css';
+// client/src/components/MovieList.js
+
+// --- Imports are now reordered to follow best practices ---
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'; // You already had this - great!
+import './MovieList.css';
+// We don't need MovieDetails.css here, so it's removed.
 
 const MovieList = () => {
   // State for the list of movies
@@ -12,23 +15,20 @@ const MovieList = () => {
   // State for displaying an error message
   const [error, setError] = useState(null);
 
-  // IMPORTANT: Replace with your actual OMDb API key
-  const API_KEY = 'e77ec6f9';
+  // --- Best Practice: Using an Environment Variable for the API Key ---
+  // Remember to create a .env.local file in your /client folder for this.
+  const API_KEY = process.env.REACT_APP_OMDB_API_KEY || 'e77ec6f9';
 
   // Function to fetch movies from OMDb API
   const fetchMovies = async (query) => {
     setError(null); // Reset error on new search
     try {
-      // 's=' is the parameter for searching for a movie title in OMDb
       const response = await axios.get(`http://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`);
-
-      // OMDb returns a 'Response' property of "True" if movies are found
       if (response.data.Response === "True") {
-        setMovies(response.data.Search); // The movie list is in the 'Search' property
+        setMovies(response.data.Search);
       } else {
-        // Handle cases where no movies are found
         setMovies([]);
-        setError(response.data.Error); // OMDb provides a specific error message
+        setError(response.data.Error);
       }
     } catch (err) {
       console.error('Error fetching movies:', err);
@@ -39,11 +39,11 @@ const MovieList = () => {
   // useEffect to perform an initial search when the component loads
   useEffect(() => {
     fetchMovies('avengers'); // Perform a default search
-  }, []); // The empty array [] means this effect runs only once on mount
+  }, []);
 
   // Handler for the form submission
   const handleSearch = (e) => {
-    e.preventDefault(); // Prevent the form from refreshing the page
+    e.preventDefault();
     if (searchTerm) {
       fetchMovies(searchTerm);
     }
@@ -52,7 +52,6 @@ const MovieList = () => {
   return (
     <div>
       <h1>Movie Search</h1>
-      {/* Search Form */}
       <form onSubmit={handleSearch} className="search-form">
         <input
           type="text"
@@ -63,20 +62,23 @@ const MovieList = () => {
         <button type="submit">Search</button>
       </form>
 
-      {/* Conditional Rendering: Show error or movie grid */}
       {error ? (
         <div className="error-message">{error}</div>
       ) : (
         <div className="movie-grid">
-          {/* OMDb uses 'imdbID' for the unique key, 'Poster' for the image, and 'Title' for the title */}
           {movies.map(movie => (
-            <div key={movie.imdbID} className="movie-card">
-              <img
-                src={movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/500x750.png?text=No+Image'}
-                alt={movie.Title}
-              />
-              <h3>{movie.Title} ({movie.Year})</h3>
-            </div>
+            // --- THIS IS THE FIX ---
+            // We wrap the entire card div in the <Link> component.
+            // The 'key' is moved to the Link, and the 'to' prop creates the URL.
+            <Link to={`/movie/${movie.imdbID}`} key={movie.imdbID} className="movie-card-link">
+              <div className="movie-card">
+                <img
+                  src={movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/500x750.png?text=No+Image'}
+                  alt={movie.Title}
+                />
+                <h3>{movie.Title} ({movie.Year})</h3>
+              </div>
+            </Link>
           ))}
         </div>
       )}

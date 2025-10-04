@@ -1,7 +1,8 @@
 // client/src/components/auth/Login.js
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+// Import our new custom Axios instance
+import api from '../../api/axios';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -18,17 +19,18 @@ const Login = () => {
   const onSubmit = async e => {
     e.preventDefault();
     try {
-      // The endpoint we created on the backend
-      const res = await axios.post('/api/auth/login', { email, password });
+      // Use our 'api' instance here.
+      const res = await api.post('/auth/login', { email, password });
       
       // The backend sends back a token, we save it
       localStorage.setItem('token', res.data.token);
       
       // Redirect to the homepage after successful login
       navigate('/');
-      window.location.reload(); // Force a reload to update the auth state
+      window.location.reload(); // Force a reload to update the auth state everywhere
     } catch (err) {
-      setError(err.response.data.msg || 'Something went wrong');
+      // Handle errors from the server response
+      setError(err.response?.data?.msg || 'Something went wrong');
     }
   };
 

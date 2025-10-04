@@ -1,7 +1,8 @@
 // client/src/components/auth/Register.js
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+// Import our new custom Axios instance
+import api from '../../api/axios';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -19,13 +20,15 @@ const Register = () => {
   const onSubmit = async e => {
     e.preventDefault();
     try {
-      // The endpoint we created on the backend
-      await axios.post('/api/auth/register', { name, email, password });
+      // Use our 'api' instance here.
+      // Notice we only need to provide the endpoint, not the full '/api/...' path.
+      await api.post('/auth/register', { name, email, password });
       
       // Redirect to login page after successful registration
       navigate('/login');
     } catch (err) {
-      setError(err.response.data.msg || 'Something went wrong');
+      // Handle errors from the server response
+      setError(err.response?.data?.msg || 'Something went wrong');
     }
   };
 

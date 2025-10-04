@@ -10,23 +10,33 @@ const Navbar = () => {
   const onLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
-    window.location.reload(); // Force reload to clear state
+    window.location.reload(); // Force reload to clear all state
   };
 
   return (
     <nav className="navbar">
-      <NavLink to="/">Home</NavLink>
-      {token ? (
-        <>
+      {/* --- Left Side of Navbar --- */}
+      <div className="navbar-left">
+        <NavLink to="/">Home</NavLink>
+        {/* Conditionally render the "Watch Later" link only if logged in */}
+        {token && (
           <NavLink to="/watch-later">Watch Later</NavLink>
+        )}
+      </div>
+
+      {/* --- Right Side of Navbar --- */}
+      <div className="navbar-right">
+        {token ? (
+          // If logged in, show the Logout button
           <button onClick={onLogout} className="logout-btn">Logout</button>
-        </>
-      ) : (
-        <>
-          <NavLink to="/login">Login</NavLink>
-          <NavLink to="/register">Register</NavLink>
-        </>
-      )}
+        ) : (
+          // If not logged in, show Login and Register links
+          <>
+            <NavLink to="/login">Login</NavLink>
+            <NavLink to="/register">Register</NavLink>
+          </>
+        )}
+      </div>
     </nav>
   );
 };

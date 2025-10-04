@@ -1,66 +1,80 @@
-// src/components/MovieDetails.js
-import './MovieDetails.css';
+// client/src/components/MovieDetails.js
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import './MovieDetails.css';
+
+// Import the original axios for public API calls
 import axios from 'axios';
+// Import our new custom instance for authenticated API calls
+import api from '../api/axios';
 
 const MovieDetails = () => {
   const [movie, setMovie] = useState(null);
-  const { id } = useParams(); // This will be the imdbID
-  const API_KEY = 'YOUR_OMDB_API_KEY'; // Replace with your key
+  const { id } = useParams(); // This will be the imdbID from the URL
+  const API_KEY = 'e77ec6f9'; // Replace with your OMDb key
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    // For OMDb, we use 'i=' to fetch by imdbID
+    // This function fetches from the PUBLIC OMDb API
     const fetchMovieDetails = async () => {
       try {
-        const response = await axios.get(`http://www.omdbapi.com/?i=${id}&apikey=${API_KEY}`);
+        // Use the original 'axios' for this external request
+        const response = await axios.get(`http://www.omdbapi.com/?i=${id}&apikey=${API_KEY}&plot=full`);
         setMovie(response.data);
       } catch (error) {
         console.error('Error fetching movie details:', error);
+        toast.error('Could not fetch movie details.');
       }
     };
     fetchMovieDetails();
   }, [id]);
 
+  // This function talks to OUR PROTECTED backend
   const handleAddToFavorites = async () => {
     if (!movie) return;
 
-    // Adjust the data structure to match our backend model
+    // The data structure our backend's Mongoose model expects
     const movieData = {
-      tmdbId: movie.imdbID, // Use imdbID and name it tmdbId as in the model
+      tmdbId: movie.imdbID, // We use imdbID as the unique identifier
       title: movie.Title,
       poster_path: movie.Poster,
       overview: movie.Plot,
     };
 
+    
+
     try {
-      const response = await axios.post('http://localhost:5000/favorites/add', movieData);
-      alert(response.data);
+      // Use our new authenticated 'api' instance for this private request
+      await api.post('/favorites/add', movieData);
+      toast.success(`${movie.Title} added to your Watch Later list!`);
     } catch (error) {
-      console.error('Error adding to favorites:', error);
-      alert('Failed to add movie to favorites.');
+      toast.error(error.response?.data?.msg || 'Failed to add movie.');
     }
   };
-  
+
   if (!movie) {
     return <div>Loading...</div>;
   }
 
-  // --- NEW JSX TO DISPLAY ALL THE DETAILS ---
   return (
     <div className="movie-details">
-      <img 
-        src={movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/500x750.png?text=No+Image'} 
-        alt={movie.Title} 
+      <img
+        src={movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/500x750.png?text=No+Image'}
+        alt={movie.Title}
       />
       <div className="details-content">
         <h1>{movie.Title} ({movie.Year})</h1>
         <p className="details-meta">{movie.Rated} | {movie.Runtime} | {movie.Genre}</p>
         <p>{movie.Plot}</p>
-        
-        <button onClick={handleAddToFavorites}>Add to Watch Later</button>
 
-        {/* -- RATINGS SECTION -- */}
+        {/* Only show the button if the user is logged in */}
+        {token && (
+          <button onClick={handleAddToFavorites}>
+            Add to Watch Later
+          </button>
+        )}
+
         <div className="details-section">
           <h2>Ratings</h2>
           {movie.Ratings && movie.Ratings.length > 0 ? (
@@ -76,7 +90,6 @@ const MovieDetails = () => {
           )}
         </div>
 
-        {/* -- CAST AND CREW SECTION -- */}
         <div className="details-section">
           <h2>Cast & Crew</h2>
           <div className="cast-crew-list">
@@ -85,13 +98,6 @@ const MovieDetails = () => {
             <p><strong>Actors:</strong> {movie.Actors}</p>
           </div>
         </div>
-        
-        {/* -- WHERE TO WATCH (IMPORTANT NOTE) -- */}
-        <div className="details-section">
-            <h2>Where to Watch</h2>
-            <p><em>Note: The OMDb API does not provide streaming information.</em></p>
-        </div>
-
       </div>
     </div>
   );
