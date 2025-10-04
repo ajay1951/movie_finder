@@ -3,7 +3,7 @@ import axios from 'axios';
 
 
 const api = axios.create({
-  baseURL: '/api', // This will be prefixed to all request URLs
+  baseURL: process.env.REACT_APP_API_URL = '/api', // This will be prefixed to all request URLs
   headers: {
     'Content-Type': 'application/json',
   },
