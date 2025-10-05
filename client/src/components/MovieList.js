@@ -23,7 +23,7 @@ const MovieList = () => {
   const fetchMovies = async (query) => {
     setError(null); // Reset error on new search
     try {
-      const response = await axios.get(`http://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`);
+      const response = await axios.get(`https://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`);
       if (response.data.Response === "True") {
         setMovies(response.data.Search);
       } else {

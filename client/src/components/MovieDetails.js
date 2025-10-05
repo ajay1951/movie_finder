@@ -20,7 +20,7 @@ const MovieDetails = () => {
     const fetchMovieDetails = async () => {
       try {
         // Use the original 'axios' for this external request
-        const response = await axios.get(`http://www.omdbapi.com/?i=${id}&apikey=${API_KEY}&plot=full`);
+        const response = await axios.get(`https://www.omdbapi.com/?i=${id}&apikey=${API_KEY}&plot=full`);
         setMovie(response.data);
       } catch (error) {
         console.error('Error fetching movie details:', error);
