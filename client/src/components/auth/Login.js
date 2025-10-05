@@ -20,7 +20,7 @@ const Login = () => {
     e.preventDefault();
     try {
       // Use our 'api' instance here.
-      const res = await api.post('/auth/login', { email, password });
+      const res = await api.post('api/auth/login', { email, password });
       
       // The backend sends back a token, we save it
       localStorage.setItem('token', res.data.token);

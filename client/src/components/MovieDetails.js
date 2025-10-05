@@ -46,7 +46,7 @@ const MovieDetails = () => {
 
     try {
       // Use our new authenticated 'api' instance for this private request
-      await api.post('/favorites/add', movieData);
+      await api.post('api/favorites/add', movieData);
       toast.success(`${movie.Title} added to your Watch Later list!`);
     } catch (error) {
       toast.error(error.response?.data?.msg || 'Failed to add movie.');

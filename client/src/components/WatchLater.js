@@ -15,7 +15,7 @@ const WatchLater = () => {
     const getFavoriteMovies = async () => {
       try {
         // Use our authenticated 'api' instance. The token is sent automatically.
-        const response = await api.get('/favorites');
+        const response = await api.get('api/favorites');
         setFavoriteMovies(response.data);
       } catch (error) {
         console.error("Error fetching favorite movies:", error);
@@ -33,7 +33,7 @@ const WatchLater = () => {
   const handleRemoveFavorite = async (movieId, movieTitle) => {
     try {
       // Use our authenticated 'api' instance to send a DELETE request
-      await api.delete(`/favorites/${movieId}`);
+      await api.delete(`api/favorites/${movieId}`);
       
       // Update the state to remove the movie from the UI instantly for a better UX
       setFavoriteMovies(prevMovies => prevMovies.filter(movie => movie._id !== movieId));

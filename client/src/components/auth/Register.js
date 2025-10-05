@@ -22,7 +22,7 @@ const Register = () => {
     try {
       // Use our 'api' instance here.
       // Notice we only need to provide the endpoint, not the full '/api/...' path.
-      await api.post('/auth/register', { name, email, password });
+      await api.post('api/auth/register', { name, email, password });
       
       // Redirect to login page after successful registration
       navigate('/login');
