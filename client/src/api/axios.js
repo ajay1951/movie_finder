@@ -1,10 +1,11 @@
 // client/src/api/axios.js
 import axios from 'axios';
 
-// Create an instance that points to our Render backend
-const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL, // e.g., https://your-backend.onrender.com
-});
+// Create a simple Axios instance.
+// DO NOT set a baseURL here. Let the environment handle it.
+// - Locally, the "proxy" in package.json will route the request.
+// - In production, Vercel/Render rewrites will route the request.
+const api = axios.create({});
 
 // Use an interceptor to add the auth token to every request sent with this instance
 api.interceptors.request.use(
@@ -15,7 +16,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  //error => Promise.reject(error)
+  error => Promise.reject(error)
 );
 
 export default api;
