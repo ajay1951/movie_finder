@@ -1,83 +1,60 @@
-// client/src/components/WatchLater.js
-import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
-import './MovieList.css'; // Reusing the movie list styles for the grid and cards
+// src/components/watchLater.js
 
-// Import our custom Axios instance for authenticated API calls
-import api from '../api/axios';
+import React, { useEffect } from 'react';
+// Import useDispatch to send actions, and useSelector to read from the store
+import { useSelector, useDispatch } from 'react-redux';
+import MovieCard from './MovieCard';
+// You will need to import the async thunk you use to fetch movies
+// Let's assume it's named `fetchWatchLaterMovies` and is in your watchLaterSlice
+import { fetchWatchLaterMovies } from '../features/watchLater/watchLaterSlice';
 
 const WatchLater = () => {
-  const [favoriteMovies, setFavoriteMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
+    // useDispatch is the function you use to send (dispatch) actions to Redux
+    const dispatch = useDispatch();
 
-  // This function talks to our protected backend to get the user's saved movies
-  useEffect(() => {
-    const getFavoriteMovies = async () => {
-      try {
-        // Use our authenticated 'api' instance. The token is sent automatically.
-        const response = await api.get('api/favorites');
-        setFavoriteMovies(response.data);
-      } catch (error) {
-        console.error("Error fetching favorite movies:", error);
-        toast.error("Could not fetch your Watch Later list. Please try again later.");
-      } finally {
-        // This will run whether the request succeeded or failed
-        setLoading(false);
-      }
-    };
+    // useSelector reads data from the Redux store.
+    // We get the user for authentication purposes.
+    const { user } = useSelector((state) => state.auth);
 
-    getFavoriteMovies();
-  }, []); // The empty array [] ensures this effect runs only once when the component mounts
+    // --- KEY CHANGE ---
+    // Instead of useState, we get the movie list, loading status, and error
+    // directly from the watchLater slice in our Redux store.
+    const { movies, isLoading, isError, message } = useSelector(
+        (state) => state.watchLater
+    );
 
-  // This function talks to our protected backend to remove a movie
-  const handleRemoveFavorite = async (movieId, movieTitle) => {
-    try {
-      // Use our authenticated 'api' instance to send a DELETE request
-      await api.delete(`api/favorites/${movieId}`);
-      
-      // Update the state to remove the movie from the UI instantly for a better UX
-      setFavoriteMovies(prevMovies => prevMovies.filter(movie => movie._id !== movieId));
-      toast.success(`"${movieTitle}" removed from your list.`);
-    } catch (error) {
-      console.error("Error removing movie from favorites:", error);
-      toast.error("Failed to remove movie. Please try again.");
+    useEffect(() => {
+        // When the component loads, we dispatch the async thunk
+        // This thunk will handle the API call and update the Redux store.
+        if (user) {
+            dispatch(fetchWatchLaterMovies());
+        }
+        // We add `user` and `dispatch` to the dependency array.
+    }, [user, dispatch]);
+
+    if (isLoading) {
+        return <div>Loading...</div>;
     }
-  };
 
-  // Display a loading message while fetching data
-  if (loading) {
-    return <div>Loading your Watch Later list...</div>;
-  }
+    if (isError) {
+        return <div>Error: {message}</div>;
+    }
 
-  return (
-    <div>
-      <h1>My Watch Later List</h1>
-      {favoriteMovies.length > 0 ? (
-        <div className="movie-grid">
-          {favoriteMovies.map(movie => (
-            <div key={movie._id} className="movie-card-container">
-              <div className="movie-card">
-                {/* OMDb posters are full URLs, so we don't need to add a prefix */}
-                <img
-                  src={movie.poster_path !== 'N/A' ? movie.poster_path : 'https://via.placeholder.com/500x750.png?text=No+Image'}
-                  alt={movie.title}
-                />
-                <h3>{movie.title}</h3>
-              </div>
-              <button
-                className="remove-btn"
-                onClick={() => handleRemoveFavorite(movie._id, movie.title)}
-              >
-                &times; {/* A simple 'X' icon */}
-              </button>
-            </div>
-          ))}
+    return (
+        <div className='watch-later-container'>
+            <h2>My Watch List</h2>
+            {movies && movies.length > 0 ? (
+                <div className='movie-grid'>
+                    {/* We now map over `movies` from the Redux store */}
+                    {movies.map((movie) => (
+                        <MovieCard key={movie._id} movie={movie} />
+                    ))}
+                </div>
+            ) : (
+                <h3>Your watch list is empty.</h3>
+            )}
         </div>
-      ) : (
-        <p>Your watch later list is empty. Go find some movies to add!</p>
-      )}
-    </div>
-  );
+    );
 };
 
 export default WatchLater;
